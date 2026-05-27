@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="Facturacion.API/Facturacion.API.csproj" />
+    <Project Path="Facturacion.Business/Facturacion.Business.csproj" />
+    <Project Path="Facturacion.Contracts/Facturacion.Contracts.csproj" />
+    <Project Path="Facturacion.DataAccess/Facturacion.DataAccess.csproj" />
+    <Project Path="Facturacion.DataManagement/Facturacion.DataManagement.csproj" />
+  </Folder>
+  <Folder Name="/tests/" />
+</Solution>

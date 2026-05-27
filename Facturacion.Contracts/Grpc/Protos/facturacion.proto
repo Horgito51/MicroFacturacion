@@ -1,0 +1,187 @@
+syntax = "proto3";
+
+package hotel.facturacion.v1;
+
+option csharp_namespace = "Facturacion.Contracts.Grpc.V1";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+service FacturacionGrpc {
+  rpc GetFacturaById(IdRequest) returns (Factura);
+  rpc GetFacturaByGuid(GuidRequest) returns (Factura);
+  rpc ListFacturas(FacturaFiltroRequest) returns (FacturaPage);
+  rpc GenerarFacturaReserva(GenerarFacturaRequest) returns (GenerarFacturaResponse);
+  rpc GenerarFacturaFinal(GenerarFacturaRequest) returns (GenerarFacturaResponse);
+  rpc AnularFactura(AnularFacturaRequest) returns (google.protobuf.Empty);
+  rpc GetSaldoPendiente(IdRequest) returns (SaldoPendienteResponse);
+}
+
+service PagoGrpc {
+  rpc GetPagoById(IdRequest) returns (Pago);
+  rpc GetPagoByGuid(GuidRequest) returns (Pago);
+  rpc ListPagos(PageRequest) returns (PagoPage);
+  rpc ListPagosByFactura(PagosByFacturaRequest) returns (PagoPage);
+  rpc CreatePago(PagoCreateRequest) returns (Pago);
+  rpc UpdatePagoEstado(PagoEstadoRequest) returns (google.protobuf.Empty);
+  rpc SimularPago(PagoSimularRequest) returns (PagoSimulado);
+  rpc GetTotalPagadoPorFactura(IdRequest) returns (TotalPagadoResponse);
+}
+
+message IdRequest { int32 id = 1; }
+message GuidRequest { string guid = 1; }
+message PageRequest { int32 page_number = 1; int32 page_size = 2; }
+
+message FacturaDetalle {
+  int32 id_factura_detalle = 1;
+  string factura_detalle_guid = 2;
+  int32 id_factura = 3;
+  string tipo_item = 4;
+  string referencia_tipo = 5;
+  google.protobuf.Int32Value referencia_id = 6;
+  string descripcion_item = 7;
+  int32 cantidad = 8;
+  string precio_unitario = 9;
+  string subtotal_linea = 10;
+  string valor_iva_linea = 11;
+  string descuento_linea = 12;
+  string total_linea = 13;
+  bytes row_version = 14;
+}
+
+message Factura {
+  int32 id_factura = 1;
+  string factura_guid = 2;
+  int32 id_cliente = 3;
+  int32 id_reserva = 4;
+  int32 id_sucursal = 5;
+  string numero_factura = 6;
+  string tipo_factura = 7;
+  google.protobuf.Timestamp fecha_emision = 8;
+  string subtotal = 9;
+  string valor_iva = 10;
+  string descuento_total = 11;
+  string total = 12;
+  string saldo_pendiente = 13;
+  string moneda = 14;
+  string observaciones_factura = 15;
+  string origen_canal_factura = 16;
+  string estado = 17;
+  repeated FacturaDetalle detalles = 18;
+  bytes row_version = 19;
+}
+
+message FacturaFiltroRequest {
+  PageRequest page = 1;
+  google.protobuf.Int32Value id_cliente = 2;
+  google.protobuf.Int32Value id_reserva = 3;
+  google.protobuf.Int32Value id_sucursal = 4;
+  string tipo_factura = 5;
+  string estado = 6;
+  string numero_factura = 7;
+  google.protobuf.BoolValue es_eliminado = 8;
+}
+
+message FacturaPage {
+  repeated Factura items = 1;
+  int32 total_count = 2;
+  int32 page_number = 3;
+  int32 page_size = 4;
+}
+
+message GenerarFacturaRequest {
+  int32 id_reserva = 1;
+  string usuario = 2;
+}
+
+message GenerarFacturaResponse { int32 id_factura = 1; }
+
+message AnularFacturaRequest {
+  int32 id_factura = 1;
+  string motivo = 2;
+  string usuario = 3;
+}
+
+message SaldoPendienteResponse {
+  int32 id_factura = 1;
+  string saldo_pendiente = 2;
+}
+
+message Pago {
+  int32 id_pago = 1;
+  string pago_guid = 2;
+  int32 id_factura = 3;
+  int32 id_reserva = 4;
+  string monto = 5;
+  string metodo_pago = 6;
+  bool es_pago_electronico = 7;
+  string proveedor_pasarela = 8;
+  string transaccion_externa = 9;
+  string codigo_autorizacion = 10;
+  string referencia = 11;
+  string estado_pago = 12;
+  google.protobuf.Timestamp fecha_pago_utc = 13;
+  string moneda = 14;
+  string tipo_cambio = 15;
+  string respuesta_pasarela = 16;
+  bytes row_version = 17;
+}
+
+message PagoCreateRequest {
+  int32 id_factura = 1;
+  int32 id_reserva = 2;
+  string monto = 3;
+  string metodo_pago = 4;
+  bool es_pago_electronico = 5;
+  string proveedor_pasarela = 6;
+  string transaccion_externa = 7;
+  string codigo_autorizacion = 8;
+  string referencia = 9;
+  string moneda = 10;
+  string tipo_cambio = 11;
+}
+
+message PagoEstadoRequest {
+  int32 id_pago = 1;
+  string nuevo_estado = 2;
+  string usuario = 3;
+}
+
+message PagoSimularRequest {
+  int32 id_reserva = 1;
+  string monto = 2;
+  string token_pago = 3;
+  string referencia = 4;
+  string usuario = 5;
+}
+
+message PagoSimulado {
+  int32 id_reserva = 1;
+  string codigo_reserva = 2;
+  string monto = 3;
+  string estado_pago = 4;
+  string estado_reserva = 5;
+  string transaccion_externa = 6;
+  string codigo_autorizacion = 7;
+  string mensaje = 8;
+  google.protobuf.Timestamp fecha_pago_utc = 9;
+}
+
+message PagosByFacturaRequest {
+  int32 id_factura = 1;
+  int32 page_number = 2;
+  int32 page_size = 3;
+}
+
+message PagoPage {
+  repeated Pago items = 1;
+  int32 total_count = 2;
+  int32 page_number = 3;
+  int32 page_size = 4;
+}
+
+message TotalPagadoResponse {
+  int32 id_factura = 1;
+  string total_pagado = 2;
+}
