@@ -95,3 +95,7 @@ C:\Users\jorge\OneDrive\Escritorio\Puce\Semestre 6\Integracion de sistemas\Micro
 C:\Users\jorge\OneDrive\Escritorio\Puce\Semestre 6\Integracion de sistemas\MicroFinal - No dockers\Microservicio.Facturacion\Facturacion.API\obj\Release\net10.0\Facturacion.API.pdb
 C:\Users\jorge\OneDrive\Escritorio\Puce\Semestre 6\Integracion de sistemas\MicroFinal - No dockers\Microservicio.Facturacion\Facturacion.API\obj\Release\net10.0\Facturacion.API.genruntimeconfig.cache
 C:\Users\jorge\OneDrive\Escritorio\Puce\Semestre 6\Integracion de sistemas\MicroFinal - No dockers\Microservicio.Facturacion\Facturacion.API\obj\Release\net10.0\ref\Facturacion.API.dll
+C:\Users\jorge\OneDrive\Escritorio\Puce\Semestre 6\Integracion de sistemas\MicroFinal - No dockers\Microservicio.Facturacion\Facturacion.API\bin\Release\net10.0\RabbitMQ.Client.dll
+C:\Users\jorge\OneDrive\Escritorio\Puce\Semestre 6\Integracion de sistemas\MicroFinal - No dockers\Microservicio.Facturacion\Facturacion.API\bin\Release\net10.0\Reservas.Contracts.dll
+C:\Users\jorge\OneDrive\Escritorio\Puce\Semestre 6\Integracion de sistemas\MicroFinal - No dockers\Microservicio.Facturacion\Facturacion.API\bin\Release\net10.0\Reservas.Contracts.pdb
+C:\Users\jorge\OneDrive\Escritorio\Puce\Semestre 6\Integracion de sistemas\MicroFinal - No dockers\Microservicio.Facturacion\Facturacion.API\obj\Release\net10.0\Facturacion.API.sourcelink.json

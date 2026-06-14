@@ -9,8 +9,13 @@ using Facturacion.Business.Exceptions;
 using Facturacion.Business.Interfaces.Facturacion;
 using Facturacion.Business.Mappers.Facturacion;
 using Facturacion.Business.Validators.Facturacion;
+using Facturacion.Contracts.Events;
+using Facturacion.DataAccess.Context;
+using Facturacion.DataAccess.Entities.Eventing;
 using Facturacion.DataManagement.Facturacion.Interfaces;
 using Facturacion.DataManagement.UnitOfWork;
+using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace Facturacion.Business.Services.Facturacion
 {
@@ -20,17 +25,20 @@ namespace Facturacion.Business.Services.Facturacion
         private readonly IFacturaService _facturaService;
         private readonly IPaymentGateway _paymentGateway;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly FacturacionDbContext _context;
 
         public PagoService(
             IPagoDataService pagoDataService,
             IFacturaService facturaService,
             IPaymentGateway paymentGateway,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            FacturacionDbContext context)
         {
             _pagoDataService = pagoDataService;
             _facturaService = facturaService;
             _paymentGateway = paymentGateway;
             _unitOfWork = unitOfWork;
+            _context = context;
         }
 
         public async Task<PagoDTO> GetByIdAsync(int id, CancellationToken ct = default)
@@ -91,9 +99,58 @@ namespace Facturacion.Business.Services.Facturacion
                 var factura = await _facturaService.GetByIdAsync(created.IdFactura, ct);
                 var nuevoSaldo = Math.Max(0, factura.SaldoPendiente - created.Monto);
                 await _facturaService.UpdateSaldoPendienteAsync(created.IdFactura, nuevoSaldo, ct);
+                await AddPagoRegistradoOutboxAsync(created.IdPago, ct);
             }
 
             return created.ToDto();
+        }
+
+        private async Task AddPagoRegistradoOutboxAsync(int idPago, CancellationToken ct)
+        {
+            var pago = await _context.Pagos
+                .Include(p => p.Factura)
+                .FirstOrDefaultAsync(p => p.IdPago == idPago, ct);
+
+            if (pago is null || pago.Factura is null)
+                return;
+
+            var idempotencyKey = $"pago-registrado:{pago.PagoGuid:N}";
+            var exists = await _context.OutboxMessages.AnyAsync(message => message.IdempotencyKey == idempotencyKey, ct);
+            if (exists)
+                return;
+
+            var evt = new PagoRegistradoIntegrationEvent
+            {
+                PagoGuid = pago.PagoGuid,
+                FacturaGuid = pago.Factura.GuidFactura,
+                ReservaGuid = pago.ReservaGuid ?? pago.Factura.ReservaGuid ?? Guid.Empty,
+                Monto = pago.Monto,
+                Moneda = pago.Moneda,
+                MetodoPago = pago.MetodoPago,
+                EstadoPago = pago.EstadoPago,
+                ProveedorPasarela = pago.ProveedorPasarela,
+                TransaccionExterna = pago.TransaccionExterna,
+                FechaPagoUtc = pago.FechaPagoUtc,
+                CorrelationId = Guid.NewGuid()
+            };
+
+            await _context.OutboxMessages.AddAsync(new OutboxMessageEntity
+            {
+                EventId = evt.EventId,
+                EventType = evt.EventType,
+                EventVersion = evt.EventVersion,
+                RoutingKey = "facturacion.pago.registrado.v1",
+                Payload = JsonSerializer.Serialize(evt, new JsonSerializerOptions(JsonSerializerDefaults.Web)),
+                CorrelationId = evt.CorrelationId,
+                CausationId = evt.CausationId,
+                Source = evt.Source,
+                IdempotencyKey = idempotencyKey,
+                OccurredOnUtc = evt.OccurredOnUtc,
+                CreatedOnUtc = DateTime.UtcNow,
+                Status = "PEN"
+            }, ct);
+
+            await _context.SaveChangesAsync(ct);
         }
 
         public async Task UpdateAsync(PagoDTO pagoDto, CancellationToken ct = default)

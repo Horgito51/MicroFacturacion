@@ -13,3 +13,4 @@ C:\Users\jorge\OneDrive\Escritorio\Puce\Semestre 6\Integracion de sistemas\Micro
 C:\Users\jorge\OneDrive\Escritorio\Puce\Semestre 6\Integracion de sistemas\MicroFinal - No dockers\Microservicio.Facturacion\Facturacion.DataManagement\obj\Release\net10.0\refint\Facturacion.DataManagement.dll
 C:\Users\jorge\OneDrive\Escritorio\Puce\Semestre 6\Integracion de sistemas\MicroFinal - No dockers\Microservicio.Facturacion\Facturacion.DataManagement\obj\Release\net10.0\Facturacion.DataManagement.pdb
 C:\Users\jorge\OneDrive\Escritorio\Puce\Semestre 6\Integracion de sistemas\MicroFinal - No dockers\Microservicio.Facturacion\Facturacion.DataManagement\obj\Release\net10.0\ref\Facturacion.DataManagement.dll
+C:\Users\jorge\OneDrive\Escritorio\Puce\Semestre 6\Integracion de sistemas\MicroFinal - No dockers\Microservicio.Facturacion\Facturacion.DataManagement\obj\Release\net10.0\Facturacion.DataManagement.sourcelink.json

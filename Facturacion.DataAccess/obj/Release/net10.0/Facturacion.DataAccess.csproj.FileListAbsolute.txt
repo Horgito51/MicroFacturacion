@@ -12,3 +12,4 @@ C:\Users\jorge\OneDrive\Escritorio\Puce\Semestre 6\Integracion de sistemas\Micro
 C:\Users\jorge\OneDrive\Escritorio\Puce\Semestre 6\Integracion de sistemas\MicroFinal - No dockers\Microservicio.Facturacion\Facturacion.DataAccess\obj\Release\net10.0\Facturacion.DataAccess.pdb
 C:\Users\jorge\OneDrive\Escritorio\Puce\Semestre 6\Integracion de sistemas\MicroFinal - No dockers\Microservicio.Facturacion\Facturacion.DataAccess\obj\Release\net10.0\Facturacion.DataAccess.genruntimeconfig.cache
 C:\Users\jorge\OneDrive\Escritorio\Puce\Semestre 6\Integracion de sistemas\MicroFinal - No dockers\Microservicio.Facturacion\Facturacion.DataAccess\obj\Release\net10.0\ref\Facturacion.DataAccess.dll
+C:\Users\jorge\OneDrive\Escritorio\Puce\Semestre 6\Integracion de sistemas\MicroFinal - No dockers\Microservicio.Facturacion\Facturacion.DataAccess\obj\Release\net10.0\Facturacion.DataAccess.sourcelink.json

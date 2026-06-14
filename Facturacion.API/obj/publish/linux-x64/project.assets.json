@@ -609,6 +609,19 @@
           }
         }
       },
+      "RabbitMQ.Client/6.8.1": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/RabbitMQ.Client.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/RabbitMQ.Client.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "Swashbuckle.AspNetCore/6.6.2": {
         "type": "package",
         "dependencies": {
@@ -782,10 +795,11 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v10.0",
         "dependencies": {
+          "Facturacion.Contracts": "1.0.0",
           "Facturacion.DataAccess": "1.0.0",
           "Facturacion.DataManagement": "1.0.0",
           "Google.Protobuf": "3.30.2",
-          "Grpc.Net.Client": "2.55.0"
+          "Grpc.Net.Client": "2.67.0"
         },
         "compile": {
           "bin/placeholder/Facturacion.Business.dll": {}
@@ -839,6 +853,21 @@
         },
         "runtime": {
           "bin/placeholder/Facturacion.DataManagement.dll": {}
+        }
+      },
+      "Reservas.Contracts/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "dependencies": {
+          "Google.Protobuf": "3.30.2",
+          "Grpc.Core.Api": "2.67.0",
+          "Grpc.Net.Client": "2.67.0"
+        },
+        "compile": {
+          "bin/placeholder/Reservas.Contracts.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Reservas.Contracts.dll": {}
         }
       }
     },
@@ -1424,6 +1453,19 @@
           }
         }
       },
+      "RabbitMQ.Client/6.8.1": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/RabbitMQ.Client.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/RabbitMQ.Client.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "Swashbuckle.AspNetCore/6.6.2": {
         "type": "package",
         "dependencies": {
@@ -1591,10 +1633,11 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v10.0",
         "dependencies": {
+          "Facturacion.Contracts": "1.0.0",
           "Facturacion.DataAccess": "1.0.0",
           "Facturacion.DataManagement": "1.0.0",
           "Google.Protobuf": "3.30.2",
-          "Grpc.Net.Client": "2.55.0"
+          "Grpc.Net.Client": "2.67.0"
         },
         "compile": {
           "bin/placeholder/Facturacion.Business.dll": {}
@@ -1648,6 +1691,21 @@
         },
         "runtime": {
           "bin/placeholder/Facturacion.DataManagement.dll": {}
+        }
+      },
+      "Reservas.Contracts/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "dependencies": {
+          "Google.Protobuf": "3.30.2",
+          "Grpc.Core.Api": "2.67.0",
+          "Grpc.Net.Client": "2.67.0"
+        },
+        "compile": {
+          "bin/placeholder/Reservas.Contracts.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Reservas.Contracts.dll": {}
         }
       }
     }
@@ -2682,6 +2740,23 @@
         "microsoft.sqlserver.server.nuspec"
       ]
     },
+    "RabbitMQ.Client/6.8.1": {
+      "sha512": "jNsmGgmCNw2S/NzskeN2ijtGywtH4Sk/G6jWUTD5sY9SrC27Xz6BsLIiB8hdsfjeyWCa4j4GvCIGkpE8wrjU1Q==",
+      "type": "package",
+      "path": "rabbitmq.client/6.8.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "icon.png",
+        "lib/net462/RabbitMQ.Client.dll",
+        "lib/net462/RabbitMQ.Client.xml",
+        "lib/netstandard2.0/RabbitMQ.Client.dll",
+        "lib/netstandard2.0/RabbitMQ.Client.xml",
+        "rabbitmq.client.6.8.1.nupkg.sha512",
+        "rabbitmq.client.nuspec"
+      ]
+    },
     "Swashbuckle.AspNetCore/6.6.2": {
       "sha512": "+NB4UYVYN6AhDSjW0IJAd1AGD8V33gemFNLPaxKTtPkHB+HaKAKf9MGAEUPivEWvqeQfcKIw8lJaHq6LHljRuw==",
       "type": "package",
@@ -2970,6 +3045,11 @@
       "type": "project",
       "path": "../Facturacion.DataManagement/Facturacion.DataManagement.csproj",
       "msbuildProject": "../Facturacion.DataManagement/Facturacion.DataManagement.csproj"
+    },
+    "Reservas.Contracts/1.0.0": {
+      "type": "project",
+      "path": "../../Microservicio.Reservas/Reservas.Contracts/Reservas.Contracts.csproj",
+      "msbuildProject": "../../Microservicio.Reservas/Reservas.Contracts/Reservas.Contracts.csproj"
     }
   },
   "projectFileDependencyGroups": {
@@ -2986,6 +3066,8 @@
       "Grpc.Tools >= 2.67.0",
       "Microsoft.AspNetCore.Authentication.JwtBearer >= 10.0.6",
       "Microsoft.EntityFrameworkCore.SqlServer >= 10.0.6",
+      "RabbitMQ.Client >= 6.8.1",
+      "Reservas.Contracts >= 1.0.0",
       "Swashbuckle.AspNetCore >= 6.6.2"
     ]
   },
@@ -3033,6 +3115,9 @@
             },
             "C:\\Users\\jorge\\OneDrive\\Escritorio\\Puce\\Semestre 6\\Integracion de sistemas\\MicroFinal - No dockers\\Microservicio.Facturacion\\Facturacion.DataManagement\\Facturacion.DataManagement.csproj": {
               "projectPath": "C:\\Users\\jorge\\OneDrive\\Escritorio\\Puce\\Semestre 6\\Integracion de sistemas\\MicroFinal - No dockers\\Microservicio.Facturacion\\Facturacion.DataManagement\\Facturacion.DataManagement.csproj"
+            },
+            "C:\\Users\\jorge\\OneDrive\\Escritorio\\Puce\\Semestre 6\\Integracion de sistemas\\MicroFinal - No dockers\\Microservicio.Reservas\\Reservas.Contracts\\Reservas.Contracts.csproj": {
+              "projectPath": "C:\\Users\\jorge\\OneDrive\\Escritorio\\Puce\\Semestre 6\\Integracion de sistemas\\MicroFinal - No dockers\\Microservicio.Reservas\\Reservas.Contracts\\Reservas.Contracts.csproj"
             }
           }
         }
@@ -3088,6 +3173,10 @@
             "target": "Package",
             "version": "[10.0.6, )"
           },
+          "RabbitMQ.Client": {
+            "target": "Package",
+            "version": "[6.8.1, )"
+          },
           "Swashbuckle.AspNetCore": {
             "target": "Package",
             "version": "[6.6.2, )"
@@ -3107,7 +3196,7 @@
         "downloadDependencies": [
           {
             "name": "Microsoft.NETCore.App.Host.linux-x64",
-            "version": "[10.0.8, 10.0.8]"
+            "version": "[10.0.9, 10.0.9]"
           }
         ],
         "frameworkReferences": {
@@ -3118,7 +3207,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.300/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.301/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.AspNetCore": "(,10.0.32767]",
           "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",

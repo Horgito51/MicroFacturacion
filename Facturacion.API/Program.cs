@@ -1,6 +1,7 @@
 using System.Text;
 using System.Security.Claims;
 using System.Text.Json;
+using Facturacion.API.Eventing;
 using Asp.Versioning;
 using Facturacion.API.Models.Settings;
 using Facturacion.API.Services;
@@ -12,6 +13,8 @@ using Facturacion.DataAccess.Repositories.Facturacion;
 using Facturacion.DataAccess.Repositories.Interfaces.Facturacion;
 using Facturacion.DataManagement.Facturacion.Interfaces;
 using Facturacion.DataManagement.Facturacion.Services;
+using Facturacion.DataManagement.Eventing.Interfaces;
+using Facturacion.DataManagement.Eventing.Services;
 using Facturacion.DataManagement.UnitOfWork;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -78,8 +81,15 @@ builder.Services.AddScoped<IFacturaDetalleRepository, FacturaDetalleRepository>(
 builder.Services.AddScoped<IPagoRepository, PagoRepository>();
 builder.Services.AddScoped<IFacturaDataService, FacturaDataService>();
 builder.Services.AddScoped<IPagoDataService, PagoDataService>();
+builder.Services.AddScoped<IOutboxMessageService, OutboxMessageService>();
+builder.Services.AddScoped<IInboxMessageService, InboxMessageService>();
 builder.Services.AddScoped<IFacturaService, FacturaService>();
 builder.Services.AddScoped<IPagoService, PagoService>();
+builder.Services.Configure<RabbitMqOptions>(builder.Configuration.GetSection("RabbitMq"));
+builder.Services.AddSingleton<RabbitMqConnection>();
+builder.Services.AddScoped<IEventBus, RabbitMqEventBus>();
+builder.Services.AddHostedService<OutboxPublisherHostedService>();
+builder.Services.AddHostedService<ReservaConfirmadaConsumerHostedService>();
 AddJwtAuthentication(builder.Services, builder.Configuration, builder.Environment, backOfficeRoles);
 if (disableAuthorizationForTesting)
 {
@@ -103,6 +113,13 @@ app.UseMiddleware<AdminProfileAccessMiddleware>();
 app.UseAuthorization();
 app.MapGet("/", () => Results.Redirect("/swagger"));
 app.MapGet("/health", () => Results.Ok(new { status = "ok", service = "Microservicio.Facturacion" }));
+app.MapGet("/health/rabbitmq", (RabbitMqConnection rabbitMqConnection) =>
+{
+    var canConnect = rabbitMqConnection.CanConnect();
+    return canConnect
+        ? Results.Ok(new { status = "ok", broker = "connected", service = "Microservicio.Facturacion" })
+        : Results.Problem("No fue posible conectar a RabbitMQ desde Facturacion.", statusCode: StatusCodes.Status503ServiceUnavailable);
+});
 app.MapGet("/health/db", async (FacturacionDbContext dbContext, ILoggerFactory loggerFactory) =>
 {
     var logger = loggerFactory.CreateLogger("HealthDb");

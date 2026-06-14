@@ -22,3 +22,4 @@ C:\Users\jorge\OneDrive\Escritorio\Puce\Semestre 6\Integracion de sistemas\Micro
 C:\Users\jorge\OneDrive\Escritorio\Puce\Semestre 6\Integracion de sistemas\MicroFinal - No dockers\Microservicio.Facturacion\Facturacion.Contracts\obj\Release\net10.0\refint\Facturacion.Contracts.dll
 C:\Users\jorge\OneDrive\Escritorio\Puce\Semestre 6\Integracion de sistemas\MicroFinal - No dockers\Microservicio.Facturacion\Facturacion.Contracts\obj\Release\net10.0\Facturacion.Contracts.pdb
 C:\Users\jorge\OneDrive\Escritorio\Puce\Semestre 6\Integracion de sistemas\MicroFinal - No dockers\Microservicio.Facturacion\Facturacion.Contracts\obj\Release\net10.0\ref\Facturacion.Contracts.dll
+C:\Users\jorge\OneDrive\Escritorio\Puce\Semestre 6\Integracion de sistemas\MicroFinal - No dockers\Microservicio.Facturacion\Facturacion.Contracts\obj\Release\net10.0\Facturacion.Contracts.sourcelink.json

@@ -20,6 +20,8 @@
           "Grpc.Net.Client": "2.67.0",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "10.0.6",
           "Microsoft.EntityFrameworkCore.SqlServer": "10.0.6",
+          "RabbitMQ.Client": "6.8.1",
+          "Reservas.Contracts": "1.0.0",
           "Swashbuckle.AspNetCore": "6.6.2"
         },
         "runtime": {
@@ -401,6 +403,14 @@
           }
         }
       },
+      "RabbitMQ.Client/6.8.1": {
+        "runtime": {
+          "lib/netstandard2.0/RabbitMQ.Client.dll": {
+            "assemblyVersion": "6.0.0.0",
+            "fileVersion": "6.8.1.0"
+          }
+        }
+      },
       "Swashbuckle.AspNetCore/6.6.2": {
         "dependencies": {
           "Swashbuckle.AspNetCore.Swagger": "6.6.2",
@@ -490,6 +500,7 @@
       },
       "Facturacion.Business/1.0.0": {
         "dependencies": {
+          "Facturacion.Contracts": "1.0.0",
           "Facturacion.DataAccess": "1.0.0",
           "Facturacion.DataManagement": "1.0.0",
           "Google.Protobuf": "3.30.2",
@@ -538,6 +549,19 @@
         },
         "runtime": {
           "Facturacion.DataManagement.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Reservas.Contracts/1.0.0": {
+        "dependencies": {
+          "Google.Protobuf": "3.30.2",
+          "Grpc.Core.Api": "2.67.0",
+          "Grpc.Net.Client": "2.67.0"
+        },
+        "runtime": {
+          "Reservas.Contracts.dll": {
             "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
@@ -775,6 +799,13 @@
       "path": "microsoft.sqlserver.server/1.0.0",
       "hashPath": "microsoft.sqlserver.server.1.0.0.nupkg.sha512"
     },
+    "RabbitMQ.Client/6.8.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-jNsmGgmCNw2S/NzskeN2ijtGywtH4Sk/G6jWUTD5sY9SrC27Xz6BsLIiB8hdsfjeyWCa4j4GvCIGkpE8wrjU1Q==",
+      "path": "rabbitmq.client/6.8.1",
+      "hashPath": "rabbitmq.client.6.8.1.nupkg.sha512"
+    },
     "Swashbuckle.AspNetCore/6.6.2": {
       "type": "package",
       "serviceable": true,
@@ -854,6 +885,11 @@
       "sha512": ""
     },
     "Facturacion.DataManagement/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Reservas.Contracts/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
