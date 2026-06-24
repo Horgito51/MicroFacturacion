@@ -8,6 +8,7 @@ namespace Facturacion.DataManagement.Facturacion.Models
         public Guid PagoGuid { get; set; }
         public int IdFactura { get; set; }
         public int IdReserva { get; set; }
+        public Guid? ReservaGuid { get; set; }
         public decimal Monto { get; set; }
         public string MetodoPago { get; set; }
         public bool EsPagoElectronico { get; set; }

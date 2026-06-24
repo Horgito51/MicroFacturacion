@@ -85,7 +85,9 @@ public sealed class ReservaConfirmadaConsumerHostedService : BackgroundService
                 return;
             }
 
-            var existing = db.Facturas.FirstOrDefault(f =>
+            var existing = db.Facturas
+                .Include(f => f.Pagos)
+                .FirstOrDefault(f =>
                 f.ReservaGuid == evt.ReservaGuid &&
                 f.TipoFactura == "RESERVA" &&
                 f.Estado != "ANU" &&
@@ -96,6 +98,7 @@ public sealed class ReservaConfirmadaConsumerHostedService : BackgroundService
                 existing = CreateFacturaReserva(db, evt);
             }
 
+            EnsurePagoSimulado(db, existing, evt);
             AddFacturaGeneradaOutbox(db, existing, evt);
             MarkInboxProcessed(db, evt.EventId);
             db.SaveChanges();
@@ -120,9 +123,9 @@ public sealed class ReservaConfirmadaConsumerHostedService : BackgroundService
             ClienteGuid = evt.ClienteGuid == Guid.Empty ? null : evt.ClienteGuid,
             ReservaGuid = evt.ReservaGuid,
             SucursalGuid = evt.SucursalGuid == Guid.Empty ? null : evt.SucursalGuid,
-            IdCliente = 0,
-            IdReserva = 0,
-            IdSucursal = 0,
+            IdCliente = ToPositiveLogicalId(evt.ClienteGuid),
+            IdReserva = ToPositiveLogicalId(evt.ReservaGuid),
+            IdSucursal = ToPositiveLogicalId(evt.SucursalGuid),
             NumeroFactura = $"EVT-{now:yyyyMMddHHmmss}-{evt.ReservaGuid.ToString("N")[..8]}",
             TipoFactura = "RESERVA",
             FechaEmision = now,
@@ -161,6 +164,117 @@ public sealed class ReservaConfirmadaConsumerHostedService : BackgroundService
         db.Facturas.Add(factura);
         db.SaveChanges();
         return factura;
+    }
+
+    private static void EnsurePagoSimulado(FacturacionDbContext db, FacturaEntity factura, ReservaConfirmadaIntegrationEvent evt)
+    {
+        var montoPago = factura.SaldoPendiente > 0
+            ? factura.SaldoPendiente
+            : factura.Total;
+
+        if (montoPago <= 0)
+        {
+            factura.SaldoPendiente = 0;
+            factura.Estado = "PAG";
+            factura.ModificadoPorUsuario = "eventbus";
+            factura.FechaModificacionUtc = DateTime.UtcNow;
+            return;
+        }
+
+        var transaccionExterna = $"SIM-{evt.ReservaGuid:N}";
+        var pago = db.Pagos.FirstOrDefault(p => p.TransaccionExterna == transaccionExterna);
+
+        if (pago is null)
+        {
+            var now = DateTime.UtcNow;
+            pago = new PagoEntity
+            {
+                PagoGuid = Guid.NewGuid(),
+                IdFactura = factura.IdFactura,
+                IdReserva = factura.IdReserva > 0 ? factura.IdReserva : ToPositiveLogicalId(evt.ReservaGuid),
+                ReservaGuid = evt.ReservaGuid,
+                Monto = montoPago,
+                MetodoPago = "SIMULADO",
+                EsPagoElectronico = true,
+                ProveedorPasarela = "SIMULADOR",
+                TransaccionExterna = transaccionExterna,
+                CodigoAutorizacion = $"AUTH-{evt.ReservaGuid.ToString("N")[..12]}",
+                Referencia = $"Pago simulado reserva {evt.CodigoReserva}",
+                EstadoPago = "APR",
+                FechaPagoUtc = now,
+                Moneda = factura.Moneda,
+                TipoCambio = 1.0000m,
+                RespuestaPasarela = "Pago aprobado automaticamente por flujo v2 RabbitMQ.",
+                CreadoPorUsuario = "eventbus",
+                FechaRegistroUtc = now,
+                ServicioOrigen = "facturacion-service"
+            };
+
+            db.Pagos.Add(pago);
+        }
+
+        factura.SaldoPendiente = 0;
+        factura.Estado = "PAG";
+        factura.ModificadoPorUsuario = "eventbus";
+        factura.FechaModificacionUtc = DateTime.UtcNow;
+
+        AddPagoRegistradoOutbox(db, pago, factura, evt);
+    }
+
+    private static void AddPagoRegistradoOutbox(
+        FacturacionDbContext db,
+        PagoEntity pago,
+        FacturaEntity factura,
+        ReservaConfirmadaIntegrationEvent sourceEvent)
+    {
+        var idempotencyKey = $"pago-registrado:{pago.PagoGuid:N}";
+        if (db.OutboxMessages.Any(message =>
+            message.EventType == "facturacion.pago.registrado" &&
+            message.IdempotencyKey == idempotencyKey))
+        {
+            return;
+        }
+
+        var evt = new PagoRegistradoIntegrationEvent
+        {
+            PagoGuid = pago.PagoGuid,
+            FacturaGuid = factura.GuidFactura,
+            ReservaGuid = sourceEvent.ReservaGuid,
+            Monto = pago.Monto,
+            Moneda = pago.Moneda,
+            MetodoPago = pago.MetodoPago,
+            EstadoPago = pago.EstadoPago,
+            ProveedorPasarela = pago.ProveedorPasarela,
+            TransaccionExterna = pago.TransaccionExterna,
+            FechaPagoUtc = pago.FechaPagoUtc,
+            CorrelationId = sourceEvent.CorrelationId,
+            CausationId = sourceEvent.EventId
+        };
+
+        db.OutboxMessages.Add(new OutboxMessageEntity
+        {
+            EventId = evt.EventId,
+            EventType = evt.EventType,
+            EventVersion = evt.EventVersion,
+            RoutingKey = "facturacion.pago.registrado.v1",
+            Payload = JsonSerializer.Serialize(evt, new JsonSerializerOptions(JsonSerializerDefaults.Web)),
+            CorrelationId = evt.CorrelationId,
+            CausationId = evt.CausationId,
+            Source = evt.Source,
+            IdempotencyKey = idempotencyKey,
+            OccurredOnUtc = evt.OccurredOnUtc,
+            CreatedOnUtc = DateTime.UtcNow,
+            Status = "PEN"
+        });
+    }
+
+    private static int ToPositiveLogicalId(Guid guid)
+    {
+        if (guid == Guid.Empty)
+            return 1;
+
+        var value = BitConverter.ToInt32(guid.ToByteArray(), 0) & int.MaxValue;
+        return value == 0 ? 1 : value;
     }
 
     private static void AddFacturaGeneradaOutbox(FacturacionDbContext db, FacturaEntity factura, ReservaConfirmadaIntegrationEvent sourceEvent)
